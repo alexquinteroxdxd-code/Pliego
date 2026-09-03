@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLIEGO — Catálogo de Afiliados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17181A;
+    --paper:#EDEAE1;
+    --paper-2:#E2DED2;
+    --line:#8A8776;
+    --accent:#FF4B2E;
+    --accent-2:#2F5D8A;
+    --ok:#3E7D4C;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  img{max-width:100%; display:block;}
+
+  /* ---------- Cookie banner ---------- */
+  #cookieBar{
+    position:fixed; left:0; right:0; bottom:0; z-index:999;
+    background:var(--ink); color:var(--paper);
+    padding:16px 20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+    transform:translateY(120%); transition:transform .5s ease;
+    border-top:3px solid var(--accent);
+  }
+  #cookieBar.show{transform:translateY(0);}
+  #cookieBar p{font-size:13px; max-width:640px; opacity:.9;}
+  #cookieBar .btns{display:flex; gap:10px; margin-left:auto;}
+  #cookieBar button{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.04em;
+    padding:9px 16px; border:1px solid var(--paper); background:transparent; color:var(--paper);
+    cursor:pointer; border-radius:var(--radius); text-transform:uppercase;
+  }
+  #cookieBar button.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  /* ---------- Top bar ---------- */
+  header.top{
+    position:sticky; top:0; z-index:100;
+    background:var(--paper); border-bottom:2px solid var(--ink);
+  }
+  .top-inner{
+    max-width:1180px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .brand{
+    font-family:'Archivo Black', sans-serif; font-size:20px; letter-spacing:-.01em;
+  }
+  .brand span{color:var(--accent);}
+  nav.catnav{display:flex; gap:2px; flex-wrap:wrap;}
+  nav.catnav a{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.05em; padding:8px 10px; border:1px solid var(--ink);
+    background:var(--paper); text-decoration:none;
+  }
+  nav.catnav a:hover{background:var(--ink); color:var(--paper);}
+  .withdraw-link{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase;
+    background:var(--ink); color:var(--paper); padding:9px 14px; text-decoration:none;
+    letter-spacing:.05em; white-space:nowrap;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width:1180px; margin:0 auto; padding:64px 20px 40px;
+    display:grid; grid-template-columns:1.3fr .7fr; gap:40px; align-items:end;
+    border-bottom:1px solid var(--line);
+  }
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.12em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .hero h1{
+    font-family:'Archivo Black', sans-serif; font-size:clamp(38px, 6vw, 76px);
+    line-height:.95; letter-spacing:-.02em;
+  }
+  .hero h1 em{font-style:normal; color:var(--accent);}
+  .hero-meta{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; border-left:2px solid var(--ink);
+    padding-left:16px; color:#4a4a48;
+  }
+  .hero-meta div{margin-bottom:6px;}
+  .hero p.lead{grid-column:1/2; font-size:16px; max-width:520px; color:#3a3a38; margin-top:18px;}
+
+  /* ---------- Category section ---------- */
+  section.cat{
+    max-width:1180px; margin:0 auto; padding:56px 20px 20px; scroll-margin-top:90px;
+  }
+  .cat-head{
+    display:flex; align-items:baseline; gap:16px; border-bottom:2px solid var(--ink);
+    padding-bottom:12px; margin-bottom:28px; flex-wrap:wrap;
+  }
+  .cat-num{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--accent);}
+  .cat-head h2{
+    font-family:'Archivo Black', sans-serif; font-size:clamp(24px,3.4vw,36px); letter-spacing:-.01em;
+  }
+  .cat-sub{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--line); margin-left:auto;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:1px; background:var(--ink); border:1px solid var(--ink);}
+  .card{
+    background:var(--paper); padding:20px; display:flex; flex-direction:column; gap:12px;
+    position:relative; transition:background .2s;
+  }
+  .card:hover{background:var(--paper-2);}
+  .sku{
+    position:absolute; top:14px; right:16px; font-family:'IBM Plex Mono', monospace;
+    font-size:10px; color:var(--line);
+  }
+  .icon-box{
+    width:100%; aspect-ratio:4/3; border:1px solid var(--ink); background:#fff;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .icon-box svg{width:56%; height:56%; stroke:var(--ink); fill:none; stroke-width:1.4;}
+  .card h3{font-size:16px; font-weight:700; margin-top:4px;}
+  .card .marca{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--accent-2); text-transform:uppercase; letter-spacing:.04em;}
+  .card .desc{font-size:12.5px; color:#555; min-height:32px;}
+  .price-row{display:flex; align-items:baseline; justify-content:space-between; margin-top:auto; padding-top:10px; border-top:1px dashed var(--line);}
+  .price{font-family:'IBM Plex Mono', monospace; font-size:19px; font-weight:600;}
+  .price small{font-size:11px; color:var(--line); font-weight:400;}
+  .card-links{display:flex; flex-direction:column; gap:6px; margin-top:8px;}
+  .card-links a{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.03em; text-decoration:none; padding:8px 10px; text-align:center;
+    border:1px solid var(--ink);
+  }
+  .btn-official{background:var(--ink); color:var(--paper);}
+  .btn-official:hover{background:#000;}
+  .btn-mkt{background:transparent; color:var(--ink);}
+  .btn-mkt:hover{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  /* ---------- Withdraw panel ---------- */
+  section.withdraw{
+    max-width:1180px; margin:64px auto 0; padding:0 20px 80px; scroll-margin-top:90px;
+  }
+  .withdraw-box{
+    border:2px solid var(--ink); background:var(--ink); color:var(--paper);
+    display:grid; grid-template-columns:1fr 1.1fr;
+  }
+  .withdraw-info{padding:40px; border-right:1px solid #444;}
+  .withdraw-info .eyebrow{font-family:'IBM Plex Mono', monospace; color:var(--accent); font-size:12px; letter-spacing:.1em; text-transform:uppercase;}
+  .withdraw-info h2{font-family:'Archivo Black', sans-serif; font-size:32px; margin:12px 0 16px; letter-spacing:-.01em;}
+  .withdraw-info p{font-size:13.5px; color:#c9c7bd; margin-bottom:14px;}
+  .withdraw-info .balance{font-family:'IBM Plex Mono', monospace; font-size:38px; margin:22px 0 4px; color:#fff;}
+  .withdraw-info .balance-label{font-family:'IBM Plex Mono', monospace; font-size:11px; color:#9a9890; text-transform:uppercase; letter-spacing:.06em;}
+  .notice{
+    margin-top:24px; padding:14px; border:1px solid var(--accent); font-size:12px; color:#f0d9d2;
+    background:rgba(255,75,46,.08);
+  }
+  .withdraw-form{padding:40px; display:flex; flex-direction:column; gap:16px;}
+  .method-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .method{
+    border:1px solid #4a4a48; padding:14px; cursor:pointer; font-family:'IBM Plex Mono', monospace;
+    font-size:12px; text-transform:uppercase; letter-spacing:.03em; text-align:left; background:transparent; color:var(--paper);
+  }
+  .method.active{border-color:var(--accent); background:rgba(255,75,46,.12); color:#fff;}
+  .method span{display:block; font-size:10px; color:#9a9890; margin-top:4px; text-transform:none; letter-spacing:0;}
+  .method.active span{color:#e8b8ab;}
+  label{font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#c9c7bd; margin-bottom:-8px;}
+  input, select{
+    background:#232325; border:1px solid #4a4a48; color:#fff; padding:12px; font-family:'IBM Plex Mono', monospace;
+    font-size:13px; border-radius:var(--radius);
+  }
+  input:focus, select:focus{outline:2px solid var(--accent); border-color:var(--accent);}
+  .submit-btn{
+    background:var(--accent); color:#fff; border:none; padding:14px; font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase; letter-spacing:.05em; font-size:13px; cursor:pointer; margin-top:6px;
+  }
+  .submit-btn:hover{background:#e8401f;}
+  .confirm{
+    display:none; margin-top:6px; padding:12px; border:1px solid var(--ok); background:rgba(62,125,76,.12);
+    font-size:12px; color:#bfe6c6; font-family:'IBM Plex Mono', monospace;
+  }
+  .confirm.show{display:block;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:2px solid var(--ink); padding:30px 20px 100px; max-width:1180px; margin:0 auto;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;}
+    .hero-meta{border-left:none; border-top:2px solid var(--ink); padding-left:0; padding-top:14px;}
+    .withdraw-box{grid-template-columns:1fr;}
+    .withdraw-info{border-right:none; border-bottom:1px solid #444;}
+    nav.catnav{display:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">PLIE<span>GO</span></div>
+    <nav class="catnav">
+      <a href="#gym">Gym</a>
+      <a href="#motos">Motos</a>
+      <a href="#tech">Tech</a>
+      <a href="#suple">Suplementos</a>
+      <a href="#mochilas">Mochilas</a>
+      <a href="#tiktok">TikTok Shop</a>
+    </nav>
+    <a href="#retiro" class="withdraw-link">Mis ganancias →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="eyebrow">Catálogo de enlaces · Ed. 01 / 2026</span>
+    <h1>Equipo real,<br>fuente <em>oficial</em>.</h1>
+    <p class="lead">Cada producto enlaza a la tienda de marca o al listado verificado en Amazon y MercadoLibre. Sin relleno, solo la ficha y el botón.</p>
+  </div>
+  <div class="hero-meta mono">
+    <div>05 categorías</div>
+    <div>Marcas oficiales verificadas</div>
+    <div>Enlaces directos, sin intermediarios</div>
+  </div>
+</section>
+
+<!-- ============ GYM ============ -->
+<section class="cat" id="gym">
+  <div class="cat-head">
+    <span class="cat-num mono">01</span>
+    <h2>Máquinas de gym</h2>
+    <span class="cat-sub">LIFE FITNESS</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">GYM-014</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M4 8v8M20 8v8M6 12h12M6 9v6M18 9v6"/></svg></div>
+      <span class="marca">Life Fitness</span>
+      <h3>Caminadora Integrity SE3</h3>
+      <p class="desc">Banda profesional, consola táctil, uso comercial e intensivo.</p>
+      <div class="price-row"><span class="price">$149,900 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.lifefitness.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://www.mercadolibre.com.mx/premium/marcas/life-fitness" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=life+fitness" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">GYM-022</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 21v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3"/></svg></div>
+      <span class="marca">Life Fitness</span>
+      <h3>Bicicleta IC7 Indoor</h3>
+      <p class="desc">Volante de inercia, resistencia magnética, ideal para clases.</p>
+      <div class="price-row"><span class="price">$52,400 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.lifefitness.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://www.mercadolibre.com.mx/premium/marcas/life-fitness" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=life+fitness+bike" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">GYM-031</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="2" y="9" width="2" height="6"/><rect x="20" y="9" width="2" height="6"/></svg></div>
+      <span class="marca">Life Fitness</span>
+      <h3>Estación multi-fuerza Signature</h3>
+      <p class="desc">Módulo multiestación, cable dual, entrenamiento funcional.</p>
+      <div class="price-row"><span class="price">$210,000 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.lifefitness.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://www.mercadolibre.com.mx/premium/marcas/life-fitness" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=life+fitness+multiestacion" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ MOTOS ============ -->
+<section class="cat" id="motos">
+  <div class="cat-head">
+    <span class="cat-num mono">02</span>
+    <h2>Motocicletas</h2>
+    <span class="cat-sub">YAMAHA Y OTRAS</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">MOT-101</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M5 17h4l3-7h5M12 10l4 7M9 10H7"/></svg></div>
+      <span class="marca">Yamaha</span>
+      <h3>Yamaha FZ 2.0</h3>
+      <p class="desc">Naked urbana, motor 149cc, ideal ciudad y trayecto diario.</p>
+      <div class="price-row"><span class="price">$54,900 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.yamaha-motor.com.mx" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://motos.mercadolibre.com.mx/yamaha/" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=accesorios+yamaha+fz" target="_blank" rel="noopener">Accesorios en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">MOT-108</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M5 17h4l3-7h5M12 10l4 7M9 10H7"/></svg></div>
+      <span class="marca">Yamaha</span>
+      <h3>Yamaha MT-03</h3>
+      <p class="desc">Deportiva de entrada, bicilíndrica 321cc.</p>
+      <div class="price-row"><span class="price">$104,000 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.yamaha-motor.com.mx" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://motos.mercadolibre.com.mx/yamaha/" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=accesorios+yamaha+mt03" target="_blank" rel="noopener">Accesorios en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">MOT-140</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M5 17h4l3-7h5M12 10l4 7M9 10H7"/></svg></div>
+      <span class="marca">Italika / Honda / otras</span>
+      <h3>Catálogo multimarca</h3>
+      <p class="desc">Modelos de trabajo, adventure y scooter de otras marcas.</p>
+      <div class="price-row"><span class="price">Desde $28,000 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-mkt" href="https://motos.mercadolibre.com.mx/" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=motocicletas" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ TECH ============ -->
+<section class="cat" id="tech">
+  <div class="cat-head">
+    <span class="cat-num mono">03</span>
+    <h2>Celulares, laptops, PC y tablets</h2>
+    <span class="cat-sub">ACEMAGIC · REDMAGIC</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">TEC-201</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 19h2"/></svg></div>
+      <span class="marca">RedMagic</span>
+      <h3>RedMagic — smartphone gaming</h3>
+      <p class="desc">Pantalla de alta tasa de refresco, ventilador interno, control de disparo.</p>
+      <div class="price-row"><span class="price">$14,999 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.redmagic.gg" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/redmagic" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=redmagic" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TEC-215</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="1"/><path d="M8 20h8M12 17v3"/></svg></div>
+      <span class="marca">ACEMAGIC</span>
+      <h3>ACEMAGIC — laptop</h3>
+      <p class="desc">Equipo portátil de productividad, chasis metálico, batería de largo aliento.</p>
+      <div class="price-row"><span class="price">$9,499 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.acemagic.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/acemagic" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=acemagic+laptop" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TEC-228</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="10" rx="1"/><path d="M8 20h6M11 14v6M19 8v8h2"/></svg></div>
+      <span class="marca">ACEMAGIC</span>
+      <h3>ACEMAGIC — mini PC</h3>
+      <p class="desc">Equipo de escritorio compacto, listo para oficina o home office.</p>
+      <div class="price-row"><span class="price">$4,299 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.acemagic.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/mini-pc-acemagic" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=acemagic+mini+pc" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TEC-233</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 19h6"/></svg></div>
+      <span class="marca">ACEMAGIC</span>
+      <h3>ACEMAGIC — tablet</h3>
+      <p class="desc">Pantalla amplia, ligera, pensada para consumo y estudio.</p>
+      <div class="price-row"><span class="price">$3,799 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.acemagic.com" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/tablet-acemagic" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=acemagic+tablet" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ SUPLEMENTOS ============ -->
+<section class="cat" id="suple">
+  <div class="cat-head">
+    <span class="cat-num mono">04</span>
+    <h2>Suplementos deportivos</h2>
+    <span class="cat-sub">TIENDAS ESPECIALIZADAS</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">SUP-301</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v4l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg></div>
+      <span class="marca">GNC</span>
+      <h3>Proteína y creatina</h3>
+      <p class="desc">Línea de proteína en polvo, creatina y aminoácidos.</p>
+      <div class="price-row"><span class="price">Desde $699 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://www.gnc.com.mx" target="_blank" rel="noopener">Tienda oficial</a>
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/proteina" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=proteina+deportiva" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">SUP-312</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2"/></svg></div>
+      <span class="marca">Multipower / genéricas</span>
+      <h3>Pre-entreno y vitaminas</h3>
+      <p class="desc">Complementos de energía, multivitamínicos y electrolitos.</p>
+      <div class="price-row"><span class="price">Desde $450 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/pre-entreno" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=pre+entreno" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ MOCHILAS ============ -->
+<section class="cat" id="mochilas">
+  <div class="cat-head">
+    <span class="cat-num mono">05</span>
+    <h2>Mochilas y accesorios de gym</h2>
+    <span class="cat-sub">ESCOLAR · DEPORTIVO</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">MOC-401</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="15" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></div>
+      <span class="marca">Varias marcas</span>
+      <h3>Mochila escolar</h3>
+      <p class="desc">Compartimento para laptop, resistente al agua, ligera.</p>
+      <div class="price-row"><span class="price">Desde $399 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/mochila-escolar" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=mochila+escolar" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">MOC-415</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="10" rx="2"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></div>
+      <span class="marca">Varias marcas</span>
+      <h3>Mochila de gym / deportiva</h3>
+      <p class="desc">Compartimento para tenis y ropa húmeda, correas reforzadas.</p>
+      <div class="price-row"><span class="price">Desde $349 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/mochila-deportiva-gym" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=mochila+gym" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">MOC-422</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="6" y="10" width="12" height="9" rx="2"/><path d="M9 10V8a3 3 0 0 1 6 0v2M4 5h16"/></svg></div>
+      <span class="marca">Varias marcas</span>
+      <h3>Accesorios de gimnasio</h3>
+      <p class="desc">Guantes, cinturón, straps, botella y candado de casillero.</p>
+      <div class="price-row"><span class="price">Desde $199 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-mkt" href="https://listado.mercadolibre.com.mx/accesorios-gym" target="_blank" rel="noopener">Ver en MercadoLibre</a>
+        <a class="btn-mkt" href="https://www.amazon.com.mx/s?k=accesorios+gym" target="_blank" rel="noopener">Ver en Amazon</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ TIKTOK SHOP ============ -->
+<section class="cat" id="tiktok">
+  <div class="cat-head">
+    <span class="cat-num mono">06</span>
+    <h2>TikTok Shop</h2>
+    <span class="cat-sub">RELOJES · PERFUMES · ROPA · PULSERAS · BOCINAS</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="sku mono">TTS-501</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></div>
+      <span class="marca">TikTok Shop</span>
+      <h3>Relojes</h3>
+      <p class="desc">Relojes de moda y deportivos, varias marcas dentro de TikTok Shop.</p>
+      <div class="price-row"><span class="price">Desde $199 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://shop.tiktok.com/view/product/category?category_id=relojes" target="_blank" rel="noopener">Ver en TikTok Shop</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TTS-512</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M9 2h6l1 4H8l1-4Z"/><path d="M7 6h10l2 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L7 6Z"/></svg></div>
+      <span class="marca">TikTok Shop</span>
+      <h3>Perfumes</h3>
+      <p class="desc">Fragancias y versiones inspiradas, hombre y mujer.</p>
+      <div class="price-row"><span class="price">Desde $149 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://shop.tiktok.com/view/product/category?category_id=perfumes" target="_blank" rel="noopener">Ver en TikTok Shop</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TTS-523</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M6 4h12l3 5-6 3v8H9v-8L3 9l3-5Z"/></svg></div>
+      <span class="marca">TikTok Shop</span>
+      <h3>Ropa</h3>
+      <p class="desc">Playeras, sudaderas y ropa de tendencia.</p>
+      <div class="price-row"><span class="price">Desde $179 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://shop.tiktok.com/view/product/category?category_id=ropa" target="_blank" rel="noopener">Ver en TikTok Shop</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TTS-534</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <span class="marca">TikTok Shop</span>
+      <h3>Pulseras</h3>
+      <p class="desc">Pulseras de moda, acero, cuero y accesorios de pareja.</p>
+      <div class="price-row"><span class="price">Desde $89 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://shop.tiktok.com/view/product/category?category_id=pulseras" target="_blank" rel="noopener">Ver en TikTok Shop</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="sku mono">TTS-545</span>
+      <div class="icon-box"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><circle cx="12" cy="8" r="2.5"/><circle cx="12" cy="16" r="2.5"/></svg></div>
+      <span class="marca">TikTok Shop</span>
+      <h3>Bocinas</h3>
+      <p class="desc">Bocinas portátiles Bluetooth, varias marcas y tamaños.</p>
+      <div class="price-row"><span class="price">Desde $249 <small>MXN aprox.</small></span></div>
+      <div class="card-links">
+        <a class="btn-official" href="https://shop.tiktok.com/view/product/category?category_id=bocinas" target="_blank" rel="noopener">Ver en TikTok Shop</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ RETIRO DE GANANCIAS ============ -->
+<section class="withdraw" id="retiro">
+  <div class="withdraw-box">
+    <div class="withdraw-info">
+      <span class="eyebrow">Panel del afiliado</span>
+      <h2>Tus ganancias</h2>
+      <div class="balance-label">Saldo disponible</div>
+      <div class="balance">$0.00 <span style="font-size:16px;color:#9a9890;">MXN</span></div>
+      <p>Este panel es una <strong>vista previa de interfaz</strong>: captura tus datos de retiro, pero para mover dinero real necesita conectarse a tu cuenta de Mercado Pago / banco desde un backend propio.</p>
+      <p>Métodos disponibles: transferencia por CLABE interbancaria, saldo Mercado Pago, pago en efectivo en Oxxo, y depósito a Banco Azteca.</p>
+      <div class="notice">Antes de operar con dinero real: registra tu negocio ante el procesador de pagos que elijas (Mercado Pago Developers, por ejemplo) y cumple sus requisitos de identidad. Ningún sitio puede activar retiros bancarios sin esa integración.</div>
+    </div>
+    <form class="withdraw-form" id="withdrawForm">
+      <label>Método de retiro</label>
+      <div class="method-grid" id="methodGrid">
+        <button type="button" class="method active" data-method="clabe">CLABE interbancaria<span>Cualquier banco, 18 dígitos</span></button>
+        <button type="button" class="method" data-method="mp">Mercado Pago<span>Saldo en cuenta MP</span></button>
+        <button type="button" class="method" data-method="oxxo">Pago en Oxxo<span>Efectivo con ficha</span></button>
+        <button type="button" class="method" data-method="azteca">Banco Azteca<span>Depósito a cuenta</span></button>
+      </div>
+
+      <div id="fieldsClabe">
+        <label>CLABE (18 dígitos)</label>
+        <input type="text" maxlength="18" placeholder="032180000118359719" inputmode="numeric">
+      </div>
+      <div id="fieldsMp" style="display:none">
+        <label>Correo o alias de Mercado Pago</label>
+        <input type="text" placeholder="tucuenta@correo.com">
+      </div>
+      <div id="fieldsOxxo" style="display:none">
+        <label>Nombre completo para la ficha</label>
+        <input type="text" placeholder="Nombre y apellidos">
+      </div>
+      <div id="fieldsAzteca" style="display:none">
+        <label>Número de cuenta Banco Azteca</label>
+        <input type="text" placeholder="Número de cuenta o tarjeta">
+      </div>
+
+      <label>Monto a retirar (MXN)</label>
+      <input type="number" placeholder="0.00" min="0">
+
+      <button type="submit" class="submit-btn">Solicitar retiro</button>
+      <div class="confirm" id="confirmMsg">Solicitud registrada en esta vista previa. Conecta el backend de pagos para procesarla de verdad.</div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <span>PLIEGO — catálogo de enlaces de afiliado</span>
+  <span>Los precios son de referencia; confirma el precio final en cada tienda</span>
+</footer>
+
+<div id="cookieBar">
+  <p>Usamos cookies propias y de terceros para recordar tus preferencias y medir qué enlaces se visitan. Puedes aceptarlas, rechazar las no esenciales, o revisar el detalle antes de decidir.</p>
+  <div class="btns">
+    <button id="cookieReject">Rechazar</button>
+    <button id="cookieAccept" class="primary">Aceptar</button>
+  </div>
+</div>
+
+<script>
+  // Cookie banner
+  (function(){
+    var bar = document.getElementById('cookieBar');
+    var stored = null;
+    try { stored = window.localStorage ? localStorage.getItem('pliego_cookie_choice') : null; } catch(e){}
+    if(!stored){ setTimeout(function(){ bar.classList.add('show'); }, 600); }
+    function choose(val){
+      try { localStorage.setItem('pliego_cookie_choice', val); } catch(e){}
+      bar.classList.remove('show');
+    }
+    document.getElementById('cookieAccept').addEventListener('click', function(){ choose('accepted'); });
+    document.getElementById('cookieReject').addEventListener('click', function(){ choose('rejected'); });
+  })();
+
+  // Withdraw method switcher
+  (function(){
+    var buttons = document.querySelectorAll('.method');
+    var panels = {
+      clabe: document.getElementById('fieldsClabe'),
+      mp: document.getElementById('fieldsMp'),
+      oxxo: document.getElementById('fieldsOxxo'),
+      azteca: document.getElementById('fieldsAzteca')
+    };
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        buttons.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        Object.keys(panels).forEach(function(k){ panels[k].style.display = 'none'; });
+        panels[btn.dataset.method].style.display = 'block';
+      });
+    });
+    document.getElementById('withdrawForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      document.getElementById('confirmMsg').classList.add('show');
+    });
+  })();
+</script>
+
+</body>
+</html>
